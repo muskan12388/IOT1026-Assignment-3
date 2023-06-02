@@ -2,162 +2,159 @@
 
 public class Pack
 {
-    private readonly InventoryItem[] _items; // You can use another data structure here if you prefer.
-    // You may need another private member variable if you use an array data structure.
+        private readonly List<InventoryItem> _items;  // List to store the inventory items
 
-    private readonly int _maxCount;
-    private readonly float _maxVolume;
-    private readonly float _maxWeight;
-    private int _currentCount; // Defaults to 0
-    private float _currentVolume;
-    private float _currentWeight;
+    private readonly int _maxCount;  // Maximum count of items allowed in the pack
+    private readonly float _maxVolume; // Maximum volume allowed in the pack
+    private readonly float _maxWeight; // Maximum weight allowed in the pack
 
+    private float _currentVolume; // Current volume occupied in the pack
+    private float _currentWeight; // Current weight occupied in the pack
 
-    // Default constructor sets the maxCount to 10 
-    // maxVolume to 20 
-    // maxWeight to 30
-    public Pack() : this(10, 20, 30) { }
+    public float EPSILON { get; private set; } // A small value used for comparison
 
-    // This constructor is not complete, but it is a good start.
+   
+    public Pack() : this(10, 20, 30) { }  // Default constructor with default pack constraints
+
     public Pack(int maxCount, float maxVolume, float maxWeight)
     {
-        _items = new InventoryItem[maxCount];
+        if (maxCount < 0 || maxVolume < EPSILON || maxWeight < EPSILON)
+        {
+            throw new ArgumentOutOfRangeException($"An item can't have {maxCount} max count,  {maxVolume} maxvolume or {maxWeight} max weight");
+        }
         _maxCount = maxCount;
         _maxVolume = maxVolume;
         _maxWeight = maxWeight;
+        _items = new List<InventoryItem>(); // Initialize the list of items
+        _currentVolume = 0f; // Initialize the current volume as 0
+        _currentWeight = 0f; // Initialize the current weight as 0
     }
 
-    // This is called a getter
+  
     public int GetMaxCount()
     {
-        return _maxCount;
+        return _maxCount; // Return the maximum count of items allowed in the pack
     }
 
-    public float GetVolume()
-    {
-        return _currentVolume;
-    }
-
+ 
     public bool Add(InventoryItem item)
     {
-        // In the `Add` method, check if adding the item would exceed the pack's 
-        // maximum count, weight, or volume. If it would not exceed these limits, 
-        // add the item to the pack and return `true`. Otherwise, return `false`.
+        
+        if (GetCurrentItemsCount() >= _maxCount)
+        {
+            Console.WriteLine("Cannot more items now because the array already put the maximum count of items into it.");
+            return false;
+        }
 
-        // Does the current item cause _currentCount to be > _maxCount ... same for vol. and weight
-        // if the new item will exceed these parameters, return false
-        // else add it to the _items array and return true.
-
-        // Do your logic to ensure the item can be added
         float weight = item.GetWeight();
         float volume = item.GetVolume();
-        if (volume <= _maxVolume)
-        {
-            _currentWeight += weight;
-            _currentVolume += volume;
-            _items[_currentCount++] = item;
-            return true;
-        }
-        return false;
+        _currentWeight += weight;
+        _currentVolume += volume;
 
+        
+        if (_currentWeight > _maxWeight || _currentVolume > _maxVolume)
+        {
+            Console.WriteLine($"Cannot add this item:{item.GetName} because it will over max weight or max volume.");
+            return false; // Unable to add item due to maximum count constraint
+        }
+        _items.Add(item); 
+        return true;
     }
 
-    // Implement this class
+  
     public override string ToString()
     {
-        throw new NotImplementedException();
+        return ($"Pack is currently at {GetCurrentItemsCount()}/{_maxCount} items, {_currentWeight}/{_maxWeight} weight, and {_currentVolume}/{_maxVolume} volume");
+    }
+
+   
+    private int GetCurrentItemsCount()
+    {
+        return _items.Count;
     }
 }
 
-// Come back to this once we learn about abstract classes.
-public abstract class InventoryItem
+
+public class InventoryItem
 {
+    private readonly string _name;
     private readonly float _volume;
     private readonly float _weight;
 
-    protected InventoryItem(float volume, float weight)
+    public InventoryItem(string name, float volume, float weight)
     {
-        if (volume <= 0f || weight <= 0f)
+        if (NewMethod(volume) || NewMethod1(weight))
         {
             throw new ArgumentOutOfRangeException($"An item can't have {volume} volume or {weight} weight");
         }
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentOutOfRangeException($"An item can't have empty name.");
+        }
+        _name = name;
         _volume = volume;
         _weight = weight;
+
+        static bool NewMethod(float volume)
+        {
+            return volume <= 0f;
+        }
+
+        static bool NewMethod1(float weight)
+        {
+            return weight <= 0f;
+        }
     }
 
-    // Returns a string representing the quantities of the item (volume & weight of the item)
-    public abstract string Display();
 
-    // Getters
     public float GetVolume()
     {
         return _volume;
     }
 
-    public float GetWeight()
+   
+    public float GetWeight() // Get the weight of the item
     {
         return _weight;
     }
+
+    
+    public string GetName() // Name of the item
+    {
+        return _name;
+    }
 }
 
-// Implement these classes - each inherits from InventoryItem
-// 1 line of code each - call base class constructor with appropriate arguments
-public class Arrow : InventoryItem
-{
-    public Arrow() : base(0.5f, 0.1f) { }
 
-    public override string Display()
-    {
-        return $"An arrow with weight {GetWeight()} and volume {GetVolume()}";
-    }
+public class Arrow : InventoryItem 
+{
+    public Arrow() : base("Arrow", 0.05f, 0.1f) { }
+
+
+    public Arrow(float volume, float weight) : base("Arrow", volume, weight) { }
 }
 
 public class Bow : InventoryItem
 {
-    public Bow() : base(1f, 4f) { }
-
-    public override string Display()
-    {
-        return $"A bow with weight {GetWeight()} and volume {GetVolume()}";
-    }
+    public Bow() : base("Bow", 1f, 4f) { }
 }
 
 public class Rope : InventoryItem
 {
-    public Rope() : base(1f, 1.5f) { }
-
-    public override string Display()
-    {
-        return $"A rope with weight {GetWeight()} and volume {GetVolume()}";
-    }
+    public Rope() : base("Rope", 1f, 1.5f) { }
 }
 
 public class Water : InventoryItem
 {
-    public Water() : base(2f, 3f) { }
-
-    public override string Display()
-    {
-        return $"Water with weight {GetWeight()} and volume {GetVolume()}";
-    }
+    public Water() : base("Water", 2f, 3f) { }
 }
 
 public class Food : InventoryItem
 {
-    public Food() : base(1f, 0.5f) { }
-
-    public override string Display()
-    {
-        return $"Yummy food with weight {GetWeight()} and volume {GetVolume()}";
-    }
+    public Food() : base("Food", 1f, 0.5f) { }
 }
 
 public class Sword : InventoryItem
 {
-    public Sword() : base(5f, 3f) { }
-
-    public override string Display()
-    {
-        return $"A sharp sword with weight {GetWeight()} and volume {GetVolume()}";
-    }
+    public Sword() : base("Sword", 5f, 3f) { }
 }

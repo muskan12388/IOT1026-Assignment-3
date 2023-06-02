@@ -6,32 +6,16 @@ namespace Assignment
     {
         static void Main()
         {
-            // You could try creating a class that takes user input to produce packs
-            // if you want more practice (PackMerchant or something)
-            // You can comment out this code until you are ready to use it if you 
-            // want to use the Main method for something else.
-            const int PackMaxItems = 10;
-            const float PackMaxVolume = 20;
-            const float PackMaxWeight = 30;
+           // Define the maximum capacity of the pack
+            const int PackMaxItems = 10; // Maximum number of items the pack can hold
+            const float PackMaxVolume = 20; // Maximum volume the pack can hold
+            const float PackMaxWeight = 30;  // Maximum weight the pack can hold
+
+            // Create a new pack with the specified maximum capacity
             Pack pack = new(PackMaxItems, PackMaxVolume, PackMaxWeight);
+
+            // Call the method to add equipment to the pack
             PackTester.AddEquipment(pack);
-
-            /*
-            List<InventoryItem> items = new List<InventoryItem>();
-
-            items.Add(new Sword());
-            items.Add(new Rope());
-            items.Add(new Water());
-            items.Add(new Food());
-            items.Add(new Bow());
-            items.Add(new Arrow());
-
-            foreach (var item in items)
-            {
-                // Massive switch statement if we don't use inheritance/polymorphism
-                System.Console.WriteLine(item.Display());
-            }
-            */
         }
     }
 }
