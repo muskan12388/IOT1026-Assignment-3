@@ -21,4 +21,4 @@ Write a description of the project here and don't forget to update the badges.
 
 [![formatting](https://github.com/muskan12388/IOT1026-Assignment-3/actions/workflows/formatting.yml/badge.svg)](https://github.com/muskan12388/IOT1026-Assignment-3/actions/workflows/formatting.yml)
 [![ci](https://github.com/muskan12388/IOT1026-Assignment-3/actions/workflows/ci.yml/badge.svg)](https://github.com/muskan12388/IOT1026-Assignment-3/actions/workflows/ci.yml)
- i tried a lot but actions were failing.
+ i tried a lot but actions were failing because of Error: Process completed with exit code 2. and i cant figured it out.
